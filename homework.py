@@ -36,12 +36,11 @@ class Training:
         self.action = action
         self.duration = duration
         self.weight = weight
-        self.training_type = None  # т.к. это const
+        self.training_type = 'Training'
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
-        distance = self.action * self.LEN_STEP / self.M_IN_KM
-        return distance
+        return self.action * self.LEN_STEP / self.M_IN_KM
 #  Т.к. метод get_distance не принимает внешних данных,
 #  то мы используем внутреннее св-во класса
 # Пример: внешние данные принимает функция __init__,
@@ -49,12 +48,11 @@ class Training:
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        mean_speed = self.get_distance() / self.duration
-        return mean_speed  # мы не можем использовать присваивание в return
+        return self.get_distance() / self.duration
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        pass
+        return NotImplementedError
 
     def show_training_info(self) -> InfoMessage:
 
@@ -68,7 +66,6 @@ class Training:
 
 class Running(Training):
     """Тренировка: бег."""
-    LEN_STEP = 0.65
     CALORIES_MEAN_SPEED_MULTIPLIER = 18
     CALORIES_MEAN_SPEED_SHIFT = 1.79
 # выполняю "вынести все неименованные значения
@@ -82,16 +79,6 @@ class Running(Training):
         super().__init__(action, duration, weight)
         self.training_type = 'Running'  # "нужно добавить атрибуты класса"
 
-    def get_distance(self) -> float:
-        return super().get_distance()
-
-    def get_mean_speed(self) -> float:
-        return super().get_mean_speed()
-
-    def show_training_info(self) -> InfoMessage:
-        return super().show_training_info()
-# self - обращение к текущему классу, super() - обращение к родительскому
-
     def get_spent_calories(self) -> float:
         return ((self.CALORIES_MEAN_SPEED_MULTIPLIER * self.get_mean_speed()
                  + self.CALORIES_MEAN_SPEED_SHIFT)
@@ -102,7 +89,6 @@ class Running(Training):
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
     KMpH_IN_MPpS = 0.278
-    LEN_STEP = 0.65
     WEIGHT_MULTIPLIER = 0.035
     SM_IN_MET = 100
     AVERAGE_SPEED_MULTIPLIER = 0.029
@@ -117,15 +103,6 @@ class SportsWalking(Training):
         super().__init__(action, duration, weight)
         self.height = height
         self.training_type = 'SportsWalking'
-
-    def get_distance(self) -> float:
-        return super().get_distance()
-
-    def get_mean_speed(self) -> float:
-        return super().get_mean_speed()
-
-    def show_training_info(self) -> InfoMessage:
-        return super().show_training_info()
 
     def get_spent_calories(self) -> float:
         return ((self.WEIGHT_MULTIPLIER * self.weight
@@ -153,28 +130,24 @@ class Swimming(Training):
         self.count_pool = count_pool
         self.training_type = 'Swimming'
 
-    def get_distance(self) -> float:
-        return super().get_distance()
-
     def get_mean_speed(self) -> float:  # Со 107 по 114 - копипаст из Running
-        return self.length_pool \
-            * self.count_pool \
-            / self.M_IN_KM \
-            / self.duration
-
-    def show_training_info(self) -> InfoMessage:
-        return super().show_training_info()
+        return (self.length_pool
+                * self.count_pool
+                / self.M_IN_KM
+                / self.duration)
 
     def get_spent_calories(self) -> float:
-        return (self.get_mean_speed()
-                + self.SHIFT_IN_SPEED) \
-            * self.SWM_SPEED_MULTIPLIER \
-            * self.weight * self.duration
+        return ((self.get_mean_speed()
+                + self.SHIFT_IN_SPEED)
+                * self.SWM_SPEED_MULTIPLIER
+                * self.weight * self.duration)
 
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    trainings = {'SWM': Swimming, 'RUN': Running, 'WLK': SportsWalking}
+    trainings: {str: Training} = {'SWM': Swimming,
+                                  'RUN': Running,
+                                  'WLK': SportsWalking}
     return trainings[workout_type](*data)
 
 
