@@ -1,3 +1,6 @@
+from typing import Dict
+
+
 class InfoMessage:
     """Информационное сообщение о тренировке."""
 
@@ -24,6 +27,7 @@ class InfoMessage:
 
 class Training:
     """Базовый класс тренировки."""
+
     MIN_IN_HOUR = 60
     LEN_STEP = 0.65
     M_IN_KM = 1000
@@ -66,6 +70,7 @@ class Training:
 
 class Running(Training):
     """Тренировка: бег."""
+
     CALORIES_MEAN_SPEED_MULTIPLIER = 18
     CALORIES_MEAN_SPEED_SHIFT = 1.79
 # выполняю "вынести все неименованные значения
@@ -88,6 +93,7 @@ class Running(Training):
 
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
+
     KMpH_IN_MPpS = 0.278
     WEIGHT_MULTIPLIER = 0.035
     SM_IN_MET = 100
@@ -114,6 +120,7 @@ class SportsWalking(Training):
 
 class Swimming(Training):
     """Тренировка: плавание."""
+
     LEN_STEP = 1.38
     SHIFT_IN_SPEED = 1.1
     SWM_SPEED_MULTIPLIER = 2
@@ -145,9 +152,9 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    trainings: {str: Training} = {'SWM': Swimming,
-                                  'RUN': Running,
-                                  'WLK': SportsWalking}
+    trainings: Dict[str, Training] = {'SWM': Swimming,
+                                      'RUN': Running,
+                                      'WLK': SportsWalking}
     return trainings[workout_type](*data)
 
 
