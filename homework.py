@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Type
 
 
 class InfoMessage:
@@ -56,7 +56,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        return NotImplementedError
+        raise NotImplementedError
 
     def show_training_info(self) -> InfoMessage:
 
@@ -152,9 +152,9 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    trainings: Dict[str, Training] = {'SWM': Swimming,
-                                      'RUN': Running,
-                                      'WLK': SportsWalking}
+    trainings: Dict[str, Type[Training]] = {'SWM': Swimming,
+                                            'RUN': Running,
+                                            'WLK': SportsWalking}
     return trainings[workout_type](*data)
 
 
